@@ -6,12 +6,16 @@ import os
 import secrets
 import shutil
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
+from urllib.parse import urlparse
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse
 from pydantic import BaseModel, Field, field_validator
+from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 import engine
 
@@ -23,11 +27,27 @@ MAX_DIM = 2000.0
 KEEP_HOURS = float(os.environ.get("KEEP_HOURS", "72"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+# Remote MCP endpoint (Streamable HTTP). The public hostname is allowlisted
+# explicitly so the SDK's DNS-rebinding protection remains enabled in production.
+mcp_server = FastMCP("Macw1u's 3D")
+_public_host = urlparse(BASE_URL).netloc
+_mcp_security = TransportSecuritySettings(
+    allowed_hosts=[_public_host, f"{_public_host.split(':')[0]}:*"]
+)
+
+@asynccontextmanager
+async def _lifespan(_app):
+    async with mcp_server.session_manager.run():
+        yield
+
+mcp_http_app = mcp_server.streamable_http_app(transport_security=_mcp_security)
+
 app = FastAPI(
     title="Macw1u's 3D",
     version="1.0.0",
     description="Tinkercad-style 3D modelling API. Build models from primitive shapes and holes.",
     servers=[{"url": BASE_URL}],
+    lifespan=_lifespan,
 )
 
 
@@ -230,3 +250,45 @@ function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSiz
 new ResizeObserver(resize).observe(stage);resize();
 renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,cam)});
 </script></body></html>"""
+
+
+# Model Context Protocol tools
+@mcp_server.tool()
+def create_3d_model(name: str, shapes: list[dict[str, Any]]) -> dict[str, Any]:
+    """Create a 3D model from primitive shapes and holes.
+
+    Each shape uses: shape (box, cylinder, sphere, half_sphere, cone, pyramid,
+    wedge, roof, torus, tube, prism), size [x,y,z] in mm, position [x,y,z]
+    where z is the bottom, rotation [rx,ry,rz] in degrees, mode solid or hole,
+    and optional color, sides, wall, and name. Holids cut earlier solids.
+    Returns viewer, preview, STL, GLB and OBJ URLs plus mesh statistics.
+    """
+    try:
+        request = ModelRequest.model_validate({"name": name, "shapes": shapes})
+        return create_model(request)
+    except HTTPException as exc:
+        raise ValueError(str(exc.detail)) from exc
+
+
+@mcp_server.tool()
+def get_3d_model(model_id: str) -> dict[str, Any]:
+    """Get a previously created model's shape list, viewer and download URLs.
+
+    Use this to inspect a model before changing or recreating it. Models expire
+    automatically after the configured retention period.
+    """
+    try:
+        return get_model(model_id)
+    except HTTPException as exc:
+        raise ValueError(str(exc.detail)) from exc
+
+
+@mcp_server.tool()
+def list_supported_3d_shapes() -> dict[str, Any]:
+    """List the primitive shapes accepted by Macw1u's 3D model builder."""
+    return {"shapes": engine.SHAPES, "units": "millimetres", "axes": "Z is up"}
+
+
+# Keep this mount last: existing FastAPI routes must be matched before the
+# catch-all mount. The MCP endpoint is then available at /mcp.
+app.mount("/", mcp_http_app)
