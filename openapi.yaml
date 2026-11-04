@@ -4,8 +4,9 @@ info:
   description: Tinkercad-style 3D modelling. Build models from primitive shapes and holes, get a live 3D viewer, a PNG preview and printable STL files.
   version: 1.0.0
 servers:
-  # Replace with your deployed HTTPS URL (no trailing slash)
-  - url: https://YOUR-APP-URL.example.com
+  - url: https://macw1u-s-3d-gpt-plugin.onrender.com
+security:
+  - ApiKeyAuth: []
 paths:
   /v1/models:
     post:
@@ -48,6 +49,11 @@ paths:
         "404":
           description: Model not found or expired.
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
   schemas:
     Vec3:
       type: array
