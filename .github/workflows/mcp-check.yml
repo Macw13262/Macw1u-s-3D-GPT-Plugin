@@ -1,0 +1,37 @@
+name: MCP build check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify-mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Compile Python modules
+        run: python -m compileall -q server.py engine.py
+      - name: Verify MCP route and tools
+        run: |
+          python - <<'PY'
+          import server
+
+          assert any(getattr(route, "path", None) == "/mcp" for route in server.mcp_http_app.routes)
+          assert any(getattr(route, "path", None) == "/" for route in server.app.routes)
+          tools = server.mcp_server._tool_manager.list_tools()
+          names = {tool.name for tool in tools}
+          expected = {"create_3d_model", "get_3d_model", "list_supported_3d_shapes"}
+          assert expected.issubset(names), f"Missing MCP tools: {expected - names}"
+          print("MCP route and all expected tools are registered.")
+          PY
