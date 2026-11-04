@@ -29,18 +29,14 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Remote MCP endpoint (Streamable HTTP). The public hostname is allowlisted
 # explicitly so the SDK's DNS-rebinding protection remains enabled in production.
-mcp_server = FastMCP("Macw1u's 3D")
-_public_host = urlparse(BASE_URL).netloc
-_mcp_security = TransportSecuritySettings(
-    allowed_hosts=[_public_host, f"{_public_host.split(':')[0]}:*"]
-)
+mcp_server = FastMCP("Macw1u's 3D", transport_security=_mcp_security)
 
 @asynccontextmanager
 async def _lifespan(_app):
     async with mcp_server.session_manager.run():
         yield
 
-mcp_http_app = mcp_server.streamable_http_app(transport_security=_mcp_security)
+mcp_http_app = mcp_server.streamable_http_app()
 
 app = FastAPI(
     title="Macw1u's 3D",
