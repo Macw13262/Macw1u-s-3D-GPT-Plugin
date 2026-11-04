@@ -1,4 +1,4 @@
-"""Macw1u's 3D - API server (use as a ChatGPT Custom GPT Action)."""
+"""Macw1u's 3D - API server and Streamable HTTP MCP integration."""
 from __future__ import annotations
 
 import json
@@ -260,7 +260,7 @@ def create_3d_model(name: str, shapes: list[dict[str, Any]]) -> dict[str, Any]:
     Each shape uses: shape (box, cylinder, sphere, half_sphere, cone, pyramid,
     wedge, roof, torus, tube, prism), size [x,y,z] in mm, position [x,y,z]
     where z is the bottom, rotation [rx,ry,rz] in degrees, mode solid or hole,
-    and optional color, sides, wall, and name. Holids cut earlier solids.
+    and optional color, sides, wall, and name. Holes cut earlier solids.
     Returns viewer, preview, STL, GLB and OBJ URLs plus mesh statistics.
     """
     try:
