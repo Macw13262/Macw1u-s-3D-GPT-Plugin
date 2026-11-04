@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  title: Macw1u's 3D
+  description: Tinkercad-style 3D modelling. Build models from primitive shapes and holes, get a live 3D viewer, a PNG preview and printable STL files.
+  version: 1.0.0
+servers:
+  # Replace with your deployed HTTPS URL (no trailing slash)
+  - url: https://YOUR-APP-URL.example.com
+paths:
+  /v1/models:
+    post:
+      operationId: createModel
+      summary: Create a 3D model from shapes and holes.
+      description: Builds a model from an ordered list of shapes. Holes cut every solid listed before them. Returns viewer, PNG preview, STL, GLB and OBJ links plus size and printability stats.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelRequest"
+      responses:
+        "200":
+          description: Model created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelResult"
+        "422":
+          description: Invalid shapes or geometry could not be built. The detail field explains why.
+  /v1/models/{model_id}:
+    get:
+      operationId: getModel
+      summary: Get a model's shape list so it can be edited.
+      description: Returns the original shapes of a previous model. Modify them and call createModel again to make a new version.
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Model details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelResult"
+        "404":
+          description: Model not found or expired.
+components:
+  schemas:
+    Vec3:
+      type: array
+      items:
+        type: number
+      minItems: 3
+      maxItems: 3
+    Shape:
+      type: object
+      required: [shape]
+      properties:
+        shape:
+          type: string
+          enum: [box, cylinder, sphere, half_sphere, cone, pyramid, wedge, roof, torus, tube, prism]
+        name:
+          type: string
+          description: Optional label.
+        size:
+          $ref: "#/components/schemas/Vec3"
+          description: Bounding box [x, y, z] in mm, measured before rotation.
+        position:
+          $ref: "#/components/schemas/Vec3"
+          description: "[x, y, z]. x/y are the centre; z is the bottom of the shape."
+        rotation:
+          $ref: "#/components/schemas/Vec3"
+          description: Degrees about the shape's own centre [rx, ry, rz].
+        mode:
+          type: string
+          enum: [solid, hole]
+          description: A hole cuts every solid listed before it.
+        color:
+          type: string
+          description: Colour name or hex value such as #ff8800.
+        sides:
+          type: integer
+          minimum: 3
+          maximum: 128
+          description: Facet count for prism or smoothness of cylinder, cone, and torus.
+        wall:
+          type: number
+          description: Tube wall thickness ratio from 0.02 to 0.9.
+    ModelRequest:
+      type: object
+      required: [shapes]
+      properties:
+        name:
+          type: string
+          description: Short model name.
+        shapes:
+          type: array
+          minItems: 1
+          maxItems: 150
+          items:
+            $ref: "#/components/schemas/Shape"
+    ModelResult:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        viewer_url:
+          type: string
+        preview_png_url:
+          type: string
+        stl_url:
+          type: string
+        glb_url:
+          type: string
+        obj_url:
+          type: string
+        stats:
+          type: object
+          properties:
+            size_mm:
+              type: array
+              items:
+                type: number
+            triangles:
+              type: integer
+            volume_mm3:
+              type: number
+              nullable: true
+            watertight:
+              type: boolean
+            printable:
+              type: boolean
+        shapes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Shape"
