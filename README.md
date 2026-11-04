@@ -1,0 +1,43 @@
+# Macw1u's 3D
+
+A Tinkercad-style 3D modelling backend for a **ChatGPT Custom GPT Action**. Describe an object and the server builds a 3D model from primitive shapes and holes.
+
+It can return:
+- an interactive 3D viewer (orbit, zoom, wireframe, turntable)
+- a rendered PNG preview
+- STL for 3D printing, plus coloured GLB and OBJ exports
+
+## Supported shapes
+
+box, cylinder, sphere, half_sphere, cone, pyramid, wedge, roof, torus, tube, and prism.
+
+Each shape supports dimensions, position, rotation, colour, and solid/hole mode.
+
+## Run locally
+
+```bash
+pip install -r requirements.txt
+API_KEY=choose-a-secret PUBLIC_BASE_URL=http://localhost:8000 uvicorn server:app --port 8000
+```
+
+API documentation: http://localhost:8000/docs
+
+## Deploy
+
+The application is containerized and can be deployed to a container hosting provider such as Render, Railway, Fly.io, or Google Cloud Run.
+
+1. Create a web service from this GitHub repository using its Dockerfile.
+2. Set `API_KEY` to a long, random secret. Do not publish this value.
+3. Set `PUBLIC_BASE_URL` to the public HTTPS address assigned by the hosting provider, without a trailing slash.
+4. Optionally configure `DATA_DIR`, `KEEP_HOURS` (default 72), and `MAX_SHAPES` (default 150).
+5. Open the service URL and confirm that the API responds.
+
+For persistent generated files, attach persistent storage and set `DATA_DIR` to its mount path. Free hosting plans may sleep or use temporary storage.
+
+## Connect a Custom GPT
+
+See [gpt_instructions.md](gpt_instructions.md) for the GPT configuration and Action setup. Before adding the Action, replace the placeholder URL in `openapi.yaml` with the deployed HTTPS URL. Configure API Key authentication using the `X-API-Key` header.
+
+## License
+
+This repository is protected by the **Macw1u's 3D Proprietary License** in [LICENSE](LICENSE). All rights are reserved. No permission is granted to copy, use, modify, or distribute the project without prior written permission. Third-party dependencies remain subject to their own licenses.
