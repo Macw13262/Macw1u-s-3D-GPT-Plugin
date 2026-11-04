@@ -27,8 +27,12 @@ MAX_DIM = 2000.0
 KEEP_HOURS = float(os.environ.get("KEEP_HOURS", "72"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# Remote MCP endpoint (Streamable HTTP). The public hostname is allowlisted
-# explicitly so the SDK's DNS-rebinding protection remains enabled in production.
+# Remote MCP endpoint (Streamable HTTP). Keep DNS-rebinding protection enabled
+# and allow the public Render hostname.
+_public_host = urlparse(BASE_URL).netloc
+_mcp_security = TransportSecuritySettings(
+    allowed_hosts=[_public_host, f"{_public_host.split(':')[0]}:*"]
+)
 mcp_server = FastMCP("Macw1u's 3D", transport_security=_mcp_security)
 
 @asynccontextmanager
