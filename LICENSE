@@ -1,21 +1,33 @@
-MIT License
+MACW1U'S 3D — PROPRIETARY LICENSE
+Copyright (c) 2026 Macw13262. All rights reserved.
 
-Copyright (c) 2026 Macw1u
+1. OWNERSHIP
+The source code, documentation, designs, assets, and other original materials in this repository (the "Materials") are owned by Macw13262, except for third-party components identified as such.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+2. NO PERMISSION GRANTED
+No permission, license, or other right is granted to any person or organization to access, use, run, copy, reproduce, modify, adapt, translate, merge, publish, distribute, sublicense, sell, rent, or otherwise exploit the Materials, in whole or in part, without prior express written permission from the copyright owner.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+3. PROHIBITED ACTIVITIES
+Without prior written permission, you may not:
+- copy or reuse any part of the source code;
+- create or distribute modified, copied, or derivative versions of the Materials;
+- incorporate the Materials into another project or product;
+- publish, share, sell, or provide the Materials to third parties;
+- remove or alter copyright, ownership, or license notices.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+4. INDEPENDENT WORK
+This license applies to the Materials and protectable expression contained in them. It does not claim ownership over general ideas, concepts, methods, functionality, or independently created code that was not copied from the Materials.
+
+5. THIRD-PARTY MATERIALS
+Third-party libraries and components remain subject to their own licenses. This license does not override those licenses.
+
+6. PERMISSIONS
+For written permission or commercial licensing, contact the repository owner through the contact details provided in the GitHub profile.
+
+7. NO WARRANTY
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EXPRESS OR IMPLIED, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW. THE COPYRIGHT OWNER IS NOT LIABLE FOR CLAIMS OR DAMAGES ARISING FROM USE OF THE MATERIALS, TO THE MAXIMUM EXTENT PERMITTED BY LAW.
+
+8. RESERVATION OF RIGHTS
+All rights not expressly granted in writing are reserved by the copyright owner.
+
+This is a proprietary, all-rights-reserved license. It is not an open-source license.
