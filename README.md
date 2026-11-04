@@ -1,6 +1,6 @@
 # Macw1u's 3D
 
-A Tinkercad-style 3D modelling backend for a **ChatGPT Custom GPT Action**. Describe an object and the server builds a 3D model from primitive shapes and holes.
+A Tinkercad-style 3D modelling backend with a **Model Context Protocol (MCP) server** and a REST API. Describe an object and the server builds a 3D model from primitive shapes and holes.
 
 It can return:
 - an interactive 3D viewer (orbit, zoom, wireframe, turntable)
@@ -22,6 +22,16 @@ API_KEY=choose-a-secret PUBLIC_BASE_URL=http://localhost:8000 uvicorn server:app
 
 API documentation: http://localhost:8000/docs
 
+MCP endpoint (Streamable HTTP): `http://localhost:8000/mcp`
+
+## MCP tools
+
+- `create_3d_model` — create a model from a list of primitive shapes and holes; returns viewer, preview, STL, GLB and OBJ URLs plus mesh statistics.
+- `get_3d_model` — retrieve a saved model's shape list and generated file URLs.
+- `list_supported_3d_shapes` — list supported primitive types and modelling units.
+
+For a deployed service, connect an MCP client to `https://YOUR-SERVICE-HOST/mcp`. The MCP route is mounted alongside the existing REST API. The server validates the public hostname to protect against DNS-rebinding requests.
+
 ## Deploy
 
 The application is containerized and can be deployed to a container hosting provider such as Render, Railway, Fly.io, or Google Cloud Run.
@@ -34,9 +44,11 @@ The application is containerized and can be deployed to a container hosting prov
 
 For persistent generated files, attach persistent storage and set `DATA_DIR` to its mount path. Free hosting plans may sleep or use temporary storage.
 
-## Connect a Custom GPT
+## Connect an MCP client
 
-See [gpt_instructions.md](gpt_instructions.md) for the GPT configuration and Action setup. Before adding the Action, replace the placeholder URL in `openapi.yaml` with the deployed HTTPS URL. Configure API Key authentication using the `X-API-Key` header.
+Use the deployed HTTPS MCP endpoint: `https://YOUR-SERVICE-HOST/mcp` with the Streamable HTTP transport. The MCP endpoint currently uses the hosting provider's HTTPS boundary and does not yet implement per-user OAuth/API-key authentication. Do not treat the endpoint as private until authentication is configured.
+
+The REST API remains available at `/docs` and retains its optional `X-API-Key` protection.
 
 ## License
 
