@@ -1,4 +1,5 @@
 # Macw1u's 3D
+MCP Server:https://macw1u-s-3d-gpt-plugin.onrender.com/mcp
 
 A Tinkercad-style 3D modelling backend with a **Model Context Protocol (MCP) server** and a REST API. Describe an object and the server builds a 3D model from primitive shapes and holes.
 
